@@ -4,27 +4,27 @@ import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import de.MCmoderSD.core.CommandHandler;
 
-public class Play {
+public class Join {
 
     // Attributes
-    private boolean firstPlay;
+    private boolean firstJoin;
     private String channel;
 
     // Constructor
-    public Play(CommandHandler commandHandler, TwitchChat chat) {
+    public Join(CommandHandler commandHandler, TwitchChat chat) {
         revert();
-        commandHandler.registerCommand(new Command("play") {
+        commandHandler.registerCommand(new Command("join") {
             @Override
             public void execute(ChannelMessageEvent event, String... args) {
-                if (!firstPlay) {
-                    firstPlay = true;
+                if (!firstJoin) {
+                    firstJoin = true;
                     channel = event.getChannel().getName();
                     timer();
                     return;
                 }
 
                 if (channel != null && channel.equals(event.getChannel().getName())) {
-                    chat.sendMessage(event.getChannel().getName(), "!play");
+                    chat.sendMessage(event.getChannel().getName(), "!join");
                     revert();
                 }
             }
@@ -33,7 +33,7 @@ public class Play {
 
     // Methods
     private void revert() {
-        firstPlay = false;
+        firstJoin = false;
         channel = null;
     }
 

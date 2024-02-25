@@ -35,7 +35,7 @@ public class CommandHandler {
 
         // Convert message to command and arguments
         String[] split = message.split(" ");
-        String command = split[0].substring(1);
+        String command = split[0].substring(1).toLowerCase();
         String[] args = new String[split.length - 1];
         System.arraycopy(split, 1, args, 0, split.length - 1);
 
