@@ -36,7 +36,7 @@ public class BotClient {
         for (String channel : channels) {
             try {
                 chat.joinChannel(channel);
-                System.out.printf("\033[0;1m [SYS] Joined Channel: %s\u001B[0m\n", channel);
+                System.out.printf("\033[0;1m[SYS] Joined Channel: %s\u001B[0m\n", channel);
                 Thread.sleep(250); // Prevent rate limit
             } catch (InterruptedException e) {
                 System.out.println("Error: " + e);
