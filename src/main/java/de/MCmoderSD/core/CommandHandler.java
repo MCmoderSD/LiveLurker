@@ -24,7 +24,14 @@ public class CommandHandler {
 
     // Manually execute a command
     public void executeCommand(ChannelMessageEvent event, String command, String... args) {
-        if (commands.containsKey(command)) getCommand(command).execute(event, args);
+        if (commands.containsKey(command)) {
+
+            // Execute command
+            getCommand(command).execute(event, args);
+
+            // Log command execution
+            System.out.printf("\033[0;1m[CMD] <%s> Executed: %s\u001B[0m\n", event.getChannel().getName(), command);
+        }
     }
 
     public void handleCommand(ChannelMessageEvent event) {
@@ -41,9 +48,6 @@ public class CommandHandler {
 
         // Execute command
         executeCommand(event, command, args);
-
-        // Log command execution
-        System.out.printf("\033[0;1m<%s> Executed: %s\u001B[0m\n", event.getChannel().getName(), command);
     }
 
     // Setter and Getter

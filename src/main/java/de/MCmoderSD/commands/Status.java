@@ -9,8 +9,8 @@ public class Status {
         commandHandler.registerCommand(new Command("status") {
             @Override
             public void execute(ChannelMessageEvent event, String... args) {
-                if (event.getUser().getName().equals(botName))
-                    chat.sendMessage(event.getChannel().getName(), "Live Lurker is currently running!");
+                if (event.getUser().getName().equals(botName.toLowerCase()))
+                    chat.sendMessage(event.getChannel().getName(), "Live and ready to lurk!");
             }
         });
     }

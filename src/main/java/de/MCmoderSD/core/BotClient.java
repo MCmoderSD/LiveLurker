@@ -6,6 +6,7 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import de.MCmoderSD.commands.Join;
 import de.MCmoderSD.commands.Play;
 import de.MCmoderSD.commands.Status;
 
@@ -43,6 +44,7 @@ public class BotClient {
         // Register commands
         new Status(commandHandler, chat, botName);
         new Play(commandHandler, chat);
+        new Join(commandHandler, chat);
 
         // Init the EventListener
         EventManager eventManager = client.getEventManager();
@@ -50,7 +52,7 @@ public class BotClient {
         eventManager.onEvent(ChannelMessageEvent.class, event -> {
 
             // Console Output
-            System.out.printf("<%s> %s: %s\n", event.getChannel().getName(), event.getUser().getName(), event.getMessage());
+            System.out.printf("[MSG] <%s> %s: %s\n", event.getChannel().getName(), event.getUser().getName(), event.getMessage());
 
             // Handle Command
             commandHandler.handleCommand(event);

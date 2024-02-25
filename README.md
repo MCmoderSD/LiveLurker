@@ -8,10 +8,9 @@ All the messages and events will be printed in the console. <br> <br>
 
 ## How to use
 
-You have to host the bot in your computer or in a server. <br>
 You need to have Java 17 installed in your computer, you can download it
 from [here](https://www.oracle.com/uk/java/technologies/downloads/#java17). <br>
-You need your Twitch Account Token, you can get it from [here](https://twitchapps.com/tmi/).<br>
+You need your Twitch Account Token, you can get it from [here](https://twitchapps.com/tmi/).<br> <br>
 Keep in mind that your token can change from to time. <br>
 But remember **don't EVER POST or SHARE your token anywhere**!!! <br> <br>
 
@@ -23,7 +22,7 @@ Clone the repository using the following command: <br>
 
 ### 2. Edit the configuration file
 
-You need to create two JSON files in ```/src/main/resources/config/``` folder. <br> <br> <br>
+You need to create two JSON files in ```/src/main/resources/config/``` folder. <br> <br>
 The first file is ```BotConfig.json``` and it should have the following structure: <br>
 
 ```json
@@ -34,7 +33,7 @@ The first file is ```BotConfig.json``` and it should have the following structur
 }
 ```
 
-The prefix is the character that the bot will use to recognize commands. <br> <br> <br>
+The prefix is the character that the bot will use to recognize commands. <br> <br>
 The second file is ```ChannelList.json``` and it should have the following structure: <br>
 
 ```json
