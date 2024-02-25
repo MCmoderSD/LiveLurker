@@ -34,8 +34,13 @@ public class BotClient {
 
         // Register the Bot to the channel
         for (String channel : channels) {
-            chat.joinChannel(channel);
-            System.out.printf("\033[0;1mJoined Channel: %s\u001B[0m\n", channel);
+            try {
+                chat.joinChannel(channel);
+                System.out.printf("\033[0;1mJoined Channel: %s\u001B[0m\n", channel);
+                Thread.sleep(250); // Prevent rate limit
+            } catch (InterruptedException e) {
+                System.out.println("Error: " + e);
+            }
         }
 
         // Init CommandHandler
