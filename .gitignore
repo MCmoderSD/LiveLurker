@@ -37,6 +37,9 @@ build/
 ### Mac OS ###
 .DS_Store
 
+/src/main/java/de/MCmoderSD/utilities/image/
+/src/main/java/de/MCmoderSD/utilities/sound/
+
 /src/main/resources/config/BotConfig.json
 /src/main/resources/config/ChannelList.json
 /src/main/resources/META-INF/
