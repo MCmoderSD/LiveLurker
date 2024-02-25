@@ -39,7 +39,7 @@ build/
 
 /src/main/resources/config/BotConfig.json
 /src/main/resources/config/ChannelList.json
-/src/main/resources/config/META-INF/
+/src/main/resources/META-INF/
 /docs/
 /out/
 /.idea/
