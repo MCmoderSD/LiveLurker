@@ -23,31 +23,44 @@ Clone the repository using the following command: <br>
 ### 2. Edit the configuration file
 
 You need to create two JSON files in ```/src/main/resources/config/``` folder. <br> <br>
-The first file is ```BotConfig.json``` and it should have the following structure: <br>
+The first file is ```Config.json``` and it should have the following structure: <br>
 
 ```json
 {
-  "botName": "YOUR_TWITCH_USERNAME",
-  "botToken": "YOUR_TWITCH_TOKEN",
+  "username": "YOUR_TWITCH_USERNAME",
+  "token": "YOUR_TWITCH_TOKEN",
   "prefix": "!"
 }
 ```
 
 The prefix is the character that the bot will use to recognize commands. <br> <br>
-The second file is ```ChannelList.json``` and it should have the following structure: <br>
+The second file is ```Channel.list``` and it should have the following structure: <br>
+
+```
+CHANNEL_NAME
+OTHER_CHANNEL_NAME
+```
+
+You can add as many channels as you want. <br> <br>
+
+### 3. Black and White list commands
+
+You can edit the ```blacklist.json``` and ```whitelist.json```  files in the ```/src/main/resources/config/```
+folder. <br>
+
+It should have the following structure: <br>
 
 ```json
 {
-  "#0": "CHANNEL_NAME",
-  "#1": "CHANNEL_NAME",
-  "#2": "CHANNEL_NAME",
-  "#3": "CHANNEL_NAME"
+  "COMMAND_NAME": "Channel1; Channel2; Channel3",
+  "OTHER_COMMAND_NAME": "Channel1; Channel2; Channel3"
 }
 ```
 
-You can add as many channels as you want, just remember to change the number. <br> <br>
+You can add as many channels or commands as you want. <br>
+The way for black and whitelist works the same. <br> <br>
 
-### 3. Compile and run the bot
+### 4. Compile and run the bot
 
 After you compiled the bot into a .jar file, you can run it using the following command: <br>
 ```java -jar NAME_OF_THE_JAR_FILE.jar``` <br> <br>
@@ -60,7 +73,7 @@ After you compiled the bot into a .jar file, you can run it using the following 
 - [x] !status command to check if the bot is running
 - [x] !play command for Marbles on Stream
 - [x] !join command for joining a raffle
-- [ ] Add a GUI
-- [ ] Add a web interface
+- [x] Graphical User Interface
+- [x] Add a way to send messages to the chat
 - [ ] Add a database to store the messages and events
-- [ ] Add a way to send messages to the chat
+- [ ] Add a web interface

@@ -6,21 +6,40 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import com.github.twitch4j.eventsub.events.ChannelFollowEvent;
+import com.github.twitch4j.eventsub.events.ChannelSubscribeEvent;
 import de.MCmoderSD.commands.Join;
 import de.MCmoderSD.commands.Play;
 import de.MCmoderSD.commands.Status;
+import de.MCmoderSD.utilities.database.MySQL;
+import de.MCmoderSD.utilities.json.JsonNode;
+import de.MCmoderSD.utilities.json.JsonUtility;
 
+import static de.MCmoderSD.utilities.other.Calculate.*;
+
+@SuppressWarnings("FieldCanBeLocal")
 public class BotClient {
+
+    // Associations
+    private final MySQL mySQL;
 
     // Attributes
     private final TwitchClient client;
     private final TwitchChat chat;
     private final CommandHandler commandHandler;
+    private final String username;
 
     // Constructor
-    public BotClient(String botName, String botToken, String prefix, String[] channels) {
+    public BotClient(String username, String token, String prefix, String[] channels, MySQL mySQL) {
 
-        OAuth2Credential credential = new OAuth2Credential("twitch", botToken);
+        // Init Username
+        this.username = username;
+
+        // Init MySQL
+        this.mySQL = mySQL;
+
+        // Init Credential
+        OAuth2Credential credential = new OAuth2Credential("twitch", token);
 
         // Init Client and Chat
         client = TwitchClientBuilder.builder()
@@ -32,35 +51,72 @@ public class BotClient {
 
         chat = client.getChat();
 
-        // Register the Bot to the channel
+        // Register the Lurker into all channels
         for (String channel : channels) {
             try {
                 chat.joinChannel(channel);
-                System.out.printf("\033[0;1m[SYS] Joined Channel: %s\u001B[0m\n", channel);
+                System.out.printf("%s%s %s Joined Channel: %s%s%s", BOLD, logTimestamp(), SYSTEM, channel, BREAK, UNBOLD);
                 Thread.sleep(250); // Prevent rate limit
             } catch (InterruptedException e) {
                 System.out.println("Error: " + e);
             }
         }
 
-        // Init CommandHandler
-        commandHandler = new CommandHandler(prefix);
+        // Init White and Blacklist
+        JsonUtility jsonUtility = new JsonUtility();
+        JsonNode whiteList = jsonUtility.load("/config/whitelist.json");
+        JsonNode blackList = jsonUtility.load("/config/blacklist.json");
 
-        // Register commands
-        new Status(commandHandler, chat, botName);
-        new Play(commandHandler, chat);
+        // Init CommandHandler
+        commandHandler = new CommandHandler(mySQL, whiteList, blackList, prefix);
+
+        // Init Commands
         new Join(commandHandler, chat);
+        new Play(commandHandler, chat);
+        new Status(commandHandler, chat, username);
 
         // Init the EventListener
         EventManager eventManager = client.getEventManager();
 
+        // Message Event
         eventManager.onEvent(ChannelMessageEvent.class, event -> {
 
             // Console Output
-            System.out.printf("[MSG] <%s> %s: %s\n", event.getChannel().getName(), event.getUser().getName(), event.getMessage());
+            System.out.printf("%s %s <%s> %s: %s%s", logTimestamp(), MESSAGE, getChannel(event), getAuthor(event), getMessage(event), BREAK);
+            if (mySQL != null)
+                mySQL.log(logDate(), logTime(), stripBrackets(MESSAGE), getChannel(event), getAuthor(event), getMessage(event));
 
             // Handle Command
             commandHandler.handleCommand(event);
         });
+
+        // Follow Event
+        eventManager.onEvent(ChannelFollowEvent.class, event -> {
+            System.out.printf("%s %s <%s> %s -> Followed%s", logTimestamp(), FOLLOW, event.getBroadcasterUserName(), event.getUserName(), BREAK);
+            if (mySQL != null)
+                mySQL.log(logDate(), logTime(), stripBrackets(FOLLOW), event.getBroadcasterUserName(), event.getUserName(), "Followed");
+        });
+
+        // Sub Event
+        eventManager.onEvent(ChannelSubscribeEvent.class, event -> {
+            System.out.printf("%s %s <%s> %s -> Subscribed %s%s", logTimestamp(), SUBSCRIBE, event.getBroadcasterUserName(), event.getUserName(), event.getTier(), BREAK);
+            if (mySQL != null)
+                mySQL.log(logDate(), logTime(), stripBrackets(SUBSCRIBE), event.getBroadcasterUserName(), event.getUserName(), "Subscribed " + event.getTier());
+        });
+    }
+
+    // Methods
+    public void joinChannel(String channel) {
+        chat.joinChannel(channel);
+    }
+
+    public void sendMessage(String channel, String message) {
+        if (!chat.getChannels().contains(channel)) joinChannel(channel);
+        if (message.length() > 500) message = message.substring(0, 500);
+        if (message.isEmpty()) return;
+
+        chat.sendMessage(channel, message);
+        System.out.printf("%s %s <%s> %s: %s%s", logTimestamp(), USER, channel, username, message, BREAK);
+        mySQL.log(logDate(), logTime(), stripBrackets(USER), channel, username, message);
     }
 }

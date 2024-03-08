@@ -4,13 +4,20 @@ import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import de.MCmoderSD.core.CommandHandler;
 
+import static de.MCmoderSD.utilities.other.Calculate.getAuthor;
+import static de.MCmoderSD.utilities.other.Calculate.getChannel;
+
 public class Status {
-    public Status(CommandHandler commandHandler, TwitchChat chat, String botName) {
-        commandHandler.registerCommand(new Command("status") {
+
+    // Constructor
+    public Status(CommandHandler commandHandler, TwitchChat chat, String username) {
+
+        // Register command
+        commandHandler.registerCommand(new Command("status") { // Command name and aliases
             @Override
             public void execute(ChannelMessageEvent event, String... args) {
-                if (event.getUser().getName().equals(botName.toLowerCase()))
-                    chat.sendMessage(event.getChannel().getName(), "Live and ready to lurk!");
+                if (getAuthor(event).equals(username.toLowerCase()))
+                    chat.sendMessage(getChannel(event), "LiveLurker ready!");
             }
         });
     }

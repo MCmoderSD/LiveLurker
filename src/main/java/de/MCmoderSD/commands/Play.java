@@ -4,44 +4,55 @@ import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import de.MCmoderSD.core.CommandHandler;
 
+import static de.MCmoderSD.utilities.other.Calculate.getChannel;
+
 public class Play {
 
     // Attributes
     private boolean firstPlay;
+    private boolean sentMessage;
     private String channel;
 
     // Constructor
     public Play(CommandHandler commandHandler, TwitchChat chat) {
-        revert();
-        commandHandler.registerCommand(new Command("play") {
+
+        // Initialize attributes
+        sentMessage = false;
+        reset();
+
+        // Register command
+        commandHandler.registerCommand(new Command("play") { // Command name and aliases
             @Override
             public void execute(ChannelMessageEvent event, String... args) {
                 if (!firstPlay) {
                     firstPlay = true;
-                    channel = event.getChannel().getName();
-                    timer();
+                    channel = getChannel(event);
+                    resetTimer(10);
                     return;
                 }
 
-                if (channel != null && channel.equals(event.getChannel().getName())) {
-                    chat.sendMessage(event.getChannel().getName(), "!play");
-                    revert();
+                if (!sentMessage && channel != null && channel.equals(getChannel(event))) {
+                    chat.sendMessage(channel, commandHandler.getPrefix() + "play");
+                    sentMessage = true;
+                    resetTimer(120);
                 }
             }
         });
     }
 
-    // Methods
-    private void revert() {
+    // Reset attributes
+    private void reset() {
         firstPlay = false;
         channel = null;
     }
 
-    private void timer() {
+    // Timer
+    private void resetTimer(int seconds) {
         new Thread(() -> {
             try {
-                Thread.sleep(5000);
-                revert();
+                Thread.sleep(seconds * 1000L);
+                reset();
+                if (sentMessage) sentMessage = false;
             } catch (InterruptedException e) {
                 System.out.println("Error: " + e);
             }
