@@ -34,6 +34,7 @@ public abstract class Command {
         return alias;
     } // Get the alias
 
+    @SuppressWarnings("unused")
     public String getDescription() {
         return description;
     } // Get the description
