@@ -4,7 +4,7 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Time;
+import java.sql.Timestamp;
 
 public class Calculate {
 
@@ -33,11 +33,6 @@ public class Calculate {
         return new Point(x, y);
     }
 
-    // Format Unix Timestamp
-    public static String formatUnixTimestamp(long unixTimestamp) {
-        return new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date(unixTimestamp * 1000));
-    }
-
     // Get the author
     public static String getAuthor(ChannelMessageEvent event) {
         return event.getUser().getName();
@@ -53,23 +48,35 @@ public class Calculate {
         return event.getChannel().getName();
     }
 
+    // Get Channel ID
+    public static int getChannelID(ChannelMessageEvent event) {
+        return Integer.parseInt(event.getChannel().getId());
+    }
+
+    // Get User ID
+    public static int getUserID(ChannelMessageEvent event) {
+        return Integer.parseInt(event.getUser().getId());
+    }
+
     // Log timestamp
     public static String logTimestamp() {
         return "[" + new java.text.SimpleDateFormat("dd-MM-yyyy|HH:mm:ss").format(new java.util.Date()) + "]";
     }
 
-    // Log date
-    public static java.sql.Date logDate() {
-        return new java.sql.Date(new java.util.Date().getTime());
+    // Trim Message
+    public static String trimMessage(String message) {
+        while (message.startsWith(" ") || message.startsWith("\n")) message = message.substring(1);
+        while (message.endsWith(" ") || message.endsWith("\n")) message = message.trim();
+        return message;
     }
 
-    // Log time
-    public static Time logTime() {
-        return new Time(new java.util.Date().getTime());
+    // Trim Args
+    public static String processArgs(String... args) {
+        return trimMessage(String.join(" ", args)).trim();
     }
 
-    // Strip Brackets
-    public static String stripBrackets(String string) {
-        return string.replaceAll("[\\[\\]]", "");
+    // Get Timestamp
+    public static Timestamp getTimestamp() {
+        return new Timestamp(new java.util.Date().getTime());
     }
 }

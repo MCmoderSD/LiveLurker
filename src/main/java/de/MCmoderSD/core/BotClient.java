@@ -71,9 +71,9 @@ public class BotClient {
         commandHandler = new CommandHandler(mySQL, whiteList, blackList, prefix);
 
         // Init Commands
-        new Join(commandHandler, chat);
-        new Play(commandHandler, chat);
-        new Status(commandHandler, chat, username);
+        new Join(mySQL, commandHandler, chat);
+        new Play(mySQL, commandHandler, chat);
+        new Status(mySQL, commandHandler, chat, username);
 
         // Init the EventListener
         EventManager eventManager = client.getEventManager();
@@ -81,28 +81,21 @@ public class BotClient {
         // Message Event
         eventManager.onEvent(ChannelMessageEvent.class, event -> {
 
+            // Log Message
+            if (mySQL != null) mySQL.logMessage(event);
+
             // Console Output
             System.out.printf("%s %s <%s> %s: %s%s", logTimestamp(), MESSAGE, getChannel(event), getAuthor(event), getMessage(event), BREAK);
-            if (mySQL != null)
-                mySQL.log(logDate(), logTime(), stripBrackets(MESSAGE), getChannel(event), getAuthor(event), getMessage(event));
 
             // Handle Command
             commandHandler.handleCommand(event);
         });
 
         // Follow Event
-        eventManager.onEvent(ChannelFollowEvent.class, event -> {
-            System.out.printf("%s %s <%s> %s -> Followed%s", logTimestamp(), FOLLOW, event.getBroadcasterUserName(), event.getUserName(), BREAK);
-            if (mySQL != null)
-                mySQL.log(logDate(), logTime(), stripBrackets(FOLLOW), event.getBroadcasterUserName(), event.getUserName(), "Followed");
-        });
+        eventManager.onEvent(ChannelFollowEvent.class, event -> System.out.printf("%s %s <%s> %s -> Followed%s", logTimestamp(), FOLLOW, event.getBroadcasterUserName(), event.getUserName(), BREAK));
 
         // Sub Event
-        eventManager.onEvent(ChannelSubscribeEvent.class, event -> {
-            System.out.printf("%s %s <%s> %s -> Subscribed %s%s", logTimestamp(), SUBSCRIBE, event.getBroadcasterUserName(), event.getUserName(), event.getTier(), BREAK);
-            if (mySQL != null)
-                mySQL.log(logDate(), logTime(), stripBrackets(SUBSCRIBE), event.getBroadcasterUserName(), event.getUserName(), "Subscribed " + event.getTier());
-        });
+        eventManager.onEvent(ChannelSubscribeEvent.class, event -> System.out.printf("%s %s <%s> %s -> Subscribed %s%s", logTimestamp(), SUBSCRIBE, event.getBroadcasterUserName(), event.getUserName(), event.getTier(), BREAK));
     }
 
     // Methods
@@ -117,6 +110,6 @@ public class BotClient {
 
         chat.sendMessage(channel, message);
         System.out.printf("%s %s <%s> %s: %s%s", logTimestamp(), USER, channel, username, message, BREAK);
-        mySQL.log(logDate(), logTime(), stripBrackets(USER), channel, username, message);
+        if (mySQL != null) mySQL.messageSent(channel, username, message);
     }
 }

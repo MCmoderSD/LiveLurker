@@ -3,21 +3,32 @@ package de.MCmoderSD.commands;
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import de.MCmoderSD.core.CommandHandler;
+import de.MCmoderSD.utilities.database.MySQL;
 
-import static de.MCmoderSD.utilities.other.Calculate.getAuthor;
-import static de.MCmoderSD.utilities.other.Calculate.getChannel;
+import static de.MCmoderSD.utilities.other.Calculate.*;
 
 public class Status {
 
     // Constructor
-    public Status(CommandHandler commandHandler, TwitchChat chat, String username) {
+    public Status(MySQL mySQL, CommandHandler commandHandler, TwitchChat chat, String username) {
+
+        // About
+        String[] name = {"status"};
+        String description = "Zeigt den Status des Bots an. Also ob er aktiv ist oder nicht.";
+
 
         // Register command
-        commandHandler.registerCommand(new Command("status") { // Command name and aliases
+        commandHandler.registerCommand(new Command(description, name) {
             @Override
             public void execute(ChannelMessageEvent event, String... args) {
-                if (getAuthor(event).equals(username.toLowerCase()))
-                    chat.sendMessage(getChannel(event), "LiveLurker ready!");
+                if (!getAuthor(event).equals(username.toLowerCase())) return;
+                String response = "LiveLurker ready!";
+
+                // Send message
+                chat.sendMessage(getChannel(event), response);
+
+                // Log response
+                if (mySQL != null) mySQL.logResponse(event, getCommand(), processArgs(args), response);
             }
         });
     }

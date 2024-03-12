@@ -32,12 +32,17 @@ public class Main {
         Frame frame = null;
         if (!(args.contains("-cli") || args.contains("-nogui"))) frame = new Frame(this);
 
-        // Load Bot Config
-        JsonNode config = jsonUtility.load(CONFIG);
+        // Check if logging is disabled
+        MySQL mySQL;
+        if (args.contains("-nolog")) mySQL = null;
+        else mySQL = new MySQL(jsonUtility.load(MYSQL_CONFIG), frame);
 
-        String username = config.get("username").asText();   // Get Username
-        String token = config.get("token").asText();         // Get Token
-        String prefix = config.get("prefix").asText();       // Get Prefix
+        // Load Config
+        JsonNode botConfig = jsonUtility.load(CONFIG);
+
+        String botName = botConfig.get("username").asText();    // Get Bot Name
+        String botToken = botConfig.get("token").asText();      // Get Bot Token
+        String prefix = botConfig.get("prefix").asText();       // Get Prefix
 
         // Load Channel List
         String[] channels = null;
@@ -58,11 +63,8 @@ public class Main {
 
         if (channels == null) throw new IllegalArgumentException("Channel List is empty!");
 
-        // Load MySQL Config
-        MySQL mySQL = args.contains("-log") ? new MySQL(jsonUtility.load(MYSQL_CONFIG), frame) : null;
-
         // Init Bot
-        botClient = new BotClient(username, token, prefix, channels, mySQL);
+        botClient = new BotClient(botName, botToken, prefix, channels, mySQL);
     }
 
     // PSVM
