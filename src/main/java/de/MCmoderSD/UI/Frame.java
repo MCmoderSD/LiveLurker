@@ -18,7 +18,7 @@ public class Frame extends JFrame {
     // Constructor
     public Frame(Main main) {
         super();
-        setTitle("MCmoderSD");
+        setTitle("LiveLurker v2.0");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);

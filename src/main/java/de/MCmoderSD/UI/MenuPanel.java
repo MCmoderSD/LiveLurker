@@ -60,7 +60,7 @@ public class MenuPanel extends JPanel {
         textField.setBorder(new LineBorder(LIGHT, 5));
         add(textField);
 
-            // Key Listener
+        // Key Listener
         textField.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent evt) {
                 int keyCode = evt.getKeyCode();
@@ -119,6 +119,7 @@ public class MenuPanel extends JPanel {
             new JOptionPane("Message must be at least 1 character long", JOptionPane.ERROR_MESSAGE).createDialog("Error").setVisible(true);
             return;
         }
+
         frame.getBotClient().sendMessage(channel, message);
         textField.setText("");
         messageHistory.push(message);

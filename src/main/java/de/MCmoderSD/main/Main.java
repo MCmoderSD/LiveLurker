@@ -34,7 +34,7 @@ public class Main {
 
         // Check if logging is disabled
         MySQL mySQL;
-        if (args.contains("-nolog")) mySQL = null;
+        if (args.contains("-nolog")) mySQL = new MySQL(frame);
         else mySQL = new MySQL(jsonUtility.load(MYSQL_CONFIG), frame);
 
         // Load Config

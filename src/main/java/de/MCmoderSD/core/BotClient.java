@@ -82,7 +82,7 @@ public class BotClient {
         eventManager.onEvent(ChannelMessageEvent.class, event -> {
 
             // Log Message
-            if (mySQL != null) mySQL.logMessage(event);
+            mySQL.logMessage(event);
 
             // Console Output
             System.out.printf("%s %s <%s> %s: %s%s", logTimestamp(), MESSAGE, getChannel(event), getAuthor(event), getMessage(event), BREAK);
@@ -110,6 +110,6 @@ public class BotClient {
 
         chat.sendMessage(channel, message);
         System.out.printf("%s %s <%s> %s: %s%s", logTimestamp(), USER, channel, username, message, BREAK);
-        if (mySQL != null) mySQL.messageSent(channel, username, message);
+        mySQL.messageSent(channel, username, message);
     }
 }

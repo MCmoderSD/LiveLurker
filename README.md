@@ -75,5 +75,5 @@ After you compiled the bot into a .jar file, you can run it using the following 
 - [x] !join command for joining a raffle
 - [x] Graphical User Interface
 - [x] Add a way to send messages to the chat
-- [ ] Add a database to store the messages and events
-- [ ] Add a web interface
+- [x] Add a database to store the messages and events
+- [ ] Add a web interface 
