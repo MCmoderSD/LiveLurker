@@ -2,11 +2,12 @@ package de.MCmoderSD.commands;
 
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+
 import de.MCmoderSD.core.CommandHandler;
+
 import de.MCmoderSD.utilities.database.MySQL;
 
-import static de.MCmoderSD.utilities.other.Calculate.getChannel;
-import static de.MCmoderSD.utilities.other.Calculate.processArgs;
+import static de.MCmoderSD.utilities.other.Calculate.*;
 
 public class Join {
 
@@ -20,7 +21,7 @@ public class Join {
 
         // About
         String[] name = {"join"};
-        String description = "Sendet den Befehl " + commandHandler.getPrefix() + "join in den Chat, um Events beizutreten";
+        String description = "Sends the command " + commandHandler.getPrefix() + "join to the chat to join the channel";
 
 
         // Initialize attributes

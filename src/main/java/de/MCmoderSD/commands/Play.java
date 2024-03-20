@@ -2,11 +2,12 @@ package de.MCmoderSD.commands;
 
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+
 import de.MCmoderSD.core.CommandHandler;
+
 import de.MCmoderSD.utilities.database.MySQL;
 
-import static de.MCmoderSD.utilities.other.Calculate.getChannel;
-import static de.MCmoderSD.utilities.other.Calculate.processArgs;
+import static de.MCmoderSD.utilities.other.Calculate.*;
 
 public class Play {
 
@@ -20,7 +21,7 @@ public class Play {
 
         // About
         String[] name = {"play"};
-        String description = "Sendet den Befehl " + commandHandler.getPrefix() + "play in den Chat, um Events beizutreten";
+        String description = "Sends the command " + commandHandler.getPrefix() + "play to the chat to play a game";
 
 
         // Initialize attributes

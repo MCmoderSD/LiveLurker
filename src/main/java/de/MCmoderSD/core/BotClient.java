@@ -8,23 +8,21 @@ import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.eventsub.events.ChannelFollowEvent;
 import com.github.twitch4j.eventsub.events.ChannelSubscribeEvent;
-import de.MCmoderSD.commands.Join;
-import de.MCmoderSD.commands.Play;
-import de.MCmoderSD.commands.Status;
+
+import de.MCmoderSD.commands.*;
+
 import de.MCmoderSD.utilities.database.MySQL;
 import de.MCmoderSD.utilities.json.JsonNode;
 import de.MCmoderSD.utilities.json.JsonUtility;
 
 import static de.MCmoderSD.utilities.other.Calculate.*;
 
-@SuppressWarnings("FieldCanBeLocal")
 public class BotClient {
 
     // Associations
     private final MySQL mySQL;
 
     // Attributes
-    private final TwitchClient client;
     private final TwitchChat chat;
     private final CommandHandler commandHandler;
     private final String username;
@@ -42,7 +40,7 @@ public class BotClient {
         OAuth2Credential credential = new OAuth2Credential("twitch", token);
 
         // Init Client and Chat
-        client = TwitchClientBuilder.builder()
+        TwitchClient client = TwitchClientBuilder.builder()
                 .withDefaultAuthToken(credential)
                 .withChatAccount(credential)
                 .withEnableChat(true)
@@ -50,17 +48,6 @@ public class BotClient {
                 .build();
 
         chat = client.getChat();
-
-        // Register the Lurker into all channels
-        for (String channel : channels) {
-            try {
-                chat.joinChannel(channel);
-                System.out.printf("%s%s %s Joined Channel: %s%s%s", BOLD, logTimestamp(), SYSTEM, channel, BREAK, UNBOLD);
-                Thread.sleep(250); // Prevent rate limit
-            } catch (InterruptedException e) {
-                System.out.println("Error: " + e);
-            }
-        }
 
         // Init White and Blacklist
         JsonUtility jsonUtility = new JsonUtility();
@@ -75,13 +62,26 @@ public class BotClient {
         new Play(mySQL, commandHandler, chat);
         new Status(mySQL, commandHandler, chat, username);
 
+        // Register the Bot into all channels
+        new Thread(() -> {
+            for (String channel : channels) {
+                try {
+                    chat.joinChannel(channel);
+                    System.out.printf("%s%s %s Joined Channel: %s%s%s", BOLD, logTimestamp(), SYSTEM, channel, BREAK, UNBOLD);
+                    Thread.sleep(250); // Prevent rate limit
+                } catch (InterruptedException e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        }).start();
+
         // Init the EventListener
         EventManager eventManager = client.getEventManager();
 
         // Message Event
         eventManager.onEvent(ChannelMessageEvent.class, event -> {
 
-            // Log Message
+            // Log to MySQL
             mySQL.logMessage(event);
 
             // Console Output
@@ -101,6 +101,11 @@ public class BotClient {
     // Methods
     public void joinChannel(String channel) {
         chat.joinChannel(channel);
+    }
+
+    @SuppressWarnings("unused")
+    public void leaveChannel(String channel) {
+        chat.leaveChannel(channel);
     }
 
     public void sendMessage(String channel, String message) {

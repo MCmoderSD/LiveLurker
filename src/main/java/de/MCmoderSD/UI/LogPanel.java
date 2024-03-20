@@ -2,8 +2,10 @@ package de.MCmoderSD.UI;
 
 import de.MCmoderSD.utilities.frontend.RoundedTextArea;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 
 import static de.MCmoderSD.utilities.other.Calculate.*;
 import static java.awt.Color.WHITE;
@@ -17,23 +19,30 @@ public class LogPanel extends JPanel {
     private final RoundedTextArea logArea;
 
     // Constructor
-    public LogPanel(Frame frame) {
+    public LogPanel(Frame frame, Dimension size) {
         super();
         setLayout(null);
-        setPreferredSize(new Dimension(1000, 720));
+        setPreferredSize(size);
         setBackground(DARK);
         setForeground(PURPLE);
         setVisible(true);
 
-        Font font = new Font("Roboto", Font.PLAIN, 20);
+        // Variables
+        int fontSize = size.width / 50;
+        int padding = size.width / 100;
 
+        // Font
+        Font font = new Font("Roboto", Font.PLAIN, fontSize);
+
+        // Log Area
         logArea = new RoundedTextArea();
-        logArea.setBounds(10, 10, 980, 700);
+        logArea.setBounds(padding, padding, size.width - 2 * padding, size.height - 2 * padding);
         logArea.setBackground(LIGHT);
         logArea.setForeground(WHITE);
         logArea.setFont(font);
         add(logArea);
 
+        // Add to Frame
         frame.add(this, BorderLayout.NORTH);
         frame.pack();
         this.frame = frame;
@@ -41,9 +50,7 @@ public class LogPanel extends JPanel {
 
     // Setter
     public void appendText(String type, String channel, String author, String message) {
-        if (frame.getChannel().equals(channel))
-            logArea.appendText(type + " <" + channel + "> " + author + ": " + message);
-        if (frame.getChannel().length() < 3)
-            logArea.appendText(type + " <" + channel + "> " + author + ": " + message);
+        if (frame.getChannel().equals(channel) || frame.getChannel().length() < 3)
+            logArea.appendText(type + " <" + channel + "> " + author + ": " + trimMessage(message));
     }
 }

@@ -3,8 +3,9 @@ package de.MCmoderSD.UI;
 import de.MCmoderSD.core.BotClient;
 import de.MCmoderSD.main.Main;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import static de.MCmoderSD.utilities.other.Calculate.*;
 
@@ -27,9 +28,13 @@ public class Frame extends JFrame {
         setLayout(new BorderLayout());
         this.main = main;
 
+        // Variables
+        int width = 1000;
+        var ratio = 0.8;
+
         // Add Panel
-        menuPanel = new MenuPanel(this);
-        logPanel = new LogPanel(this);
+        menuPanel = new MenuPanel(this, new Dimension(width, Math.toIntExact(Math.round(width * ratio * 0.1))));
+        logPanel = new LogPanel(this, new Dimension(width, Math.toIntExact(Math.round(width * ratio * 0.9))));
 
         // Set Visible
         pack();

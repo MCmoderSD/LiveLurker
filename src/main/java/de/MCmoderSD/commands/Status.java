@@ -2,7 +2,9 @@ package de.MCmoderSD.commands;
 
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+
 import de.MCmoderSD.core.CommandHandler;
+
 import de.MCmoderSD.utilities.database.MySQL;
 
 import static de.MCmoderSD.utilities.other.Calculate.*;
@@ -14,7 +16,7 @@ public class Status {
 
         // About
         String[] name = {"status"};
-        String description = "Zeigt den Status des Bots an. Also ob er aktiv ist oder nicht.";
+        String description = "Shows if LiveLurker is working";
 
 
         // Register command

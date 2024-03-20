@@ -1,7 +1,9 @@
 package de.MCmoderSD.core;
 
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+
 import de.MCmoderSD.commands.Command;
+
 import de.MCmoderSD.utilities.database.MySQL;
 import de.MCmoderSD.utilities.json.JsonNode;
 
@@ -66,7 +68,7 @@ public class CommandHandler {
             if (aliases.containsKey(command)) command = aliases.get(command);
 
             // Get Command
-            Command cmd = getCommand(command);
+            Command cmd = commands.get(command);
 
             // Check for WhiteList
             if (whiteListMap.containsKey(cmd) && !whiteListMap.get(cmd).contains(getChannel(event))) return;
@@ -74,44 +76,44 @@ public class CommandHandler {
             // Check for BlackList
             if (blackListMap.containsKey(cmd) && blackListMap.get(cmd).contains(getChannel(event))) return;
 
-            // Log command execution
-            mySQL.logCommand(event, command, processArgs(args));
+            // MySQL Log
+            mySQL.logCommand(event, cmd.getCommand(), processArgs(args));
+
+            // Console Log
+            System.out.printf("%s%s %s <%s> Executed: %s%s%s", BOLD, logTimestamp(), COMMAND, getChannel(event), command + ": " + processArgs(args), BREAK, UNBOLD);
 
             // Execute command
             cmd.execute(event, args);
-
-            // Log command execution
-            System.out.printf("%s%s %s <%s> Executed: %s%s%s", BOLD, logTimestamp(), COMMAND, getChannel(event), command + ": " + processArgs(args), BREAK, UNBOLD);
         }
     }
 
     public void handleCommand(ChannelMessageEvent event) {
-        String message = getMessage(event);
+        new Thread(() -> {
 
-        // Check for prefix
-        if (!message.startsWith(prefix)) return;
+            // Get message
+            String message = getMessage(event);
 
-        // Convert message to command and arguments
-        String[] split = message.split(" ");
-        String command = split[0].substring(1).toLowerCase();
-        String[] args = new String[split.length - 1];
-        System.arraycopy(split, 1, args, 0, split.length - 1);
+            // Check for prefix
+            if (!message.startsWith(prefix)) return;
 
-        // Execute command
-        executeCommand(event, command, args);
+            // Convert message to command and arguments
+            String[] split = message.split(" ");
+            String command = split[0].substring(1).toLowerCase();
+            String[] args = new String[split.length - 1];
+            System.arraycopy(split, 1, args, 0, split.length - 1);
+
+            // Execute command
+            executeCommand(event, command, args);
+        }).start();
     }
 
     // Setter and Getter
-    public Command getCommand(String command) {
-        return commands.get(command);
+    public String getPrefix() {
+        return prefix;
     }
 
     @SuppressWarnings("unused")
     public void removeCommand(String command) {
         commands.remove(command);
-    }
-
-    public String getPrefix() {
-        return prefix;
     }
 }
