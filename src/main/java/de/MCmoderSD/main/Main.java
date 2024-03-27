@@ -6,19 +6,14 @@ import de.MCmoderSD.core.BotClient;
 import de.MCmoderSD.utilities.database.MySQL;
 import de.MCmoderSD.utilities.json.JsonNode;
 import de.MCmoderSD.utilities.json.JsonUtility;
+import de.MCmoderSD.utilities.other.Reader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Main {
 
     // Constants
-    private static final String CONFIG = "/config/Config.json";
+    private static final String BOT_CONFIG = "/config/Config.json";
     private static final String CHANNEL_LIST = "/config/Channel.list";
     private static final String MYSQL_CONFIG = "/config/database.json";
 
@@ -33,36 +28,21 @@ public class Main {
         Frame frame = null;
         if (!(args.contains("-cli") || args.contains("-nogui"))) frame = new Frame(this);
 
-        // Check if logging is disabled
-        MySQL mySQL;
-        if (args.contains("-log")) mySQL = new MySQL(jsonUtility.load(MYSQL_CONFIG), frame);
-        else mySQL = new MySQL(frame);
+        // Logging check
+        MySQL mySQL = new MySQL(jsonUtility.load(MYSQL_CONFIG), frame, !args.contains("-log"));
 
-        // Load Config
-        JsonNode botConfig = jsonUtility.load(CONFIG);
+        // Load Bot Config
+        JsonNode botConfig = jsonUtility.load(BOT_CONFIG);
 
-        String botName = botConfig.get("username").asText();    // Get Bot Name
-        String botToken = botConfig.get("token").asText();      // Get Bot Token
+        String botName = botConfig.get("username").asText().toLowerCase();     // Get Bot Name
+        String botToken = botConfig.get("token").asText();   // Get Bot Token
         String prefix = botConfig.get("prefix").asText();       // Get Prefix
 
         // Load Channel List
-        String[] channels = null;
-        try {
-            ArrayList<String> lines = new ArrayList<>();
-            ArrayList<String> names = new ArrayList<>();
-            InputStream inputStream = getClass().getResourceAsStream(CHANNEL_LIST);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8));
-
-            String line;
-            while ((line = reader.readLine()) != null) lines.add(line);
-            for (String name : lines) if (name.length() > 3) names.add(name.replace("\n", "").replace(" ", ""));
-            channels = new String[names.size()];
-            names.toArray(channels);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-
-        if (channels == null) throw new IllegalArgumentException("Channel List is empty!");
+        Reader reader = new Reader();
+        ArrayList<String> channels = new ArrayList<>();
+        for (String channel : reader.lineRead(CHANNEL_LIST)) if (channel.length() > 3) channels.add(channel.replace("\n", "").replace(" ", ""));
+        if (!args.contains("-dev")) channels.addAll(mySQL.getActiveChannels());
 
         // Init Bot
         botClient = new BotClient(botName, botToken, prefix, channels, mySQL);

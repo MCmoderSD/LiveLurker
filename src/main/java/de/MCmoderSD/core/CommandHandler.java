@@ -107,13 +107,8 @@ public class CommandHandler {
         }).start();
     }
 
-    // Setter and Getter
+    // Getter
     public String getPrefix() {
         return prefix;
-    }
-
-    @SuppressWarnings("unused")
-    public void removeCommand(String command) {
-        commands.remove(command);
     }
 }

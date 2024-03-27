@@ -9,24 +9,30 @@ import de.MCmoderSD.utilities.database.MySQL;
 
 import static de.MCmoderSD.utilities.other.Calculate.*;
 
-public class Status {
+public class Ping {
 
     // Constructor
-    public Status(MySQL mySQL, CommandHandler commandHandler, TwitchChat chat, String botName) {
+    public Ping(MySQL mySQL, CommandHandler commandHandler, TwitchChat chat, String botName) {
 
         // About
-        String[] name = {"livelurkerstatus", "livelurkertest"};
+        String[] name = {"livelurkerping", "livelurkerlatency"};
 
 
         // Register command
         commandHandler.registerCommand(new Command(name) {
             @Override
             public void execute(ChannelMessageEvent event, String... args) {
-                if (!getAuthor(event).equals(botName)) return;
-                String response = "LiveLurker ready!";
 
-                // Send message
+                // Check Permissions
+                if (!getAuthor(event).equals(botName)) return;
+
+                // Check latency
+                String response = "Pong " + chat.getLatency() + "ms";
+
+                // Send Message
                 chat.sendMessage(getChannel(event), response);
+
+                // Log response
                 mySQL.logResponse(event, getCommand(), processArgs(args), response);
             }
         });

@@ -15,6 +15,8 @@ import de.MCmoderSD.utilities.database.MySQL;
 import de.MCmoderSD.utilities.json.JsonNode;
 import de.MCmoderSD.utilities.json.JsonUtility;
 
+import java.util.ArrayList;
+
 import static de.MCmoderSD.utilities.other.Calculate.*;
 
 public class BotClient {
@@ -25,19 +27,19 @@ public class BotClient {
     // Attributes
     private final TwitchChat chat;
     private final CommandHandler commandHandler;
-    private final String username;
+    private final String botName;
 
     // Constructor
-    public BotClient(String username, String token, String prefix, String[] channels, MySQL mySQL) {
+    public BotClient(String botName, String botToken, String prefix, ArrayList<String> channels, MySQL mySQL) {
 
-        // Init Username
-        this.username = username;
+        // Init Bot Name
+        this.botName = botName;
 
         // Init MySQL
         this.mySQL = mySQL;
 
         // Init Credential
-        OAuth2Credential credential = new OAuth2Credential("twitch", token);
+        OAuth2Credential credential = new OAuth2Credential("twitch", botToken);
 
         // Init Client and Chat
         TwitchClient client = TwitchClientBuilder.builder()
@@ -59,8 +61,10 @@ public class BotClient {
 
         // Init Commands
         new Join(mySQL, commandHandler, chat);
+        new Ping(mySQL, commandHandler, chat, botName);
         new Play(mySQL, commandHandler, chat);
-        new Status(mySQL, commandHandler, chat, username);
+        new Say(mySQL, commandHandler, chat, botName);
+        new Status(mySQL, commandHandler, chat, botName);
 
         // Register the Bot into all channels
         new Thread(() -> {
@@ -99,22 +103,19 @@ public class BotClient {
     }
 
     // Methods
-    public void joinChannel(String channel) {
-        chat.joinChannel(channel);
-    }
-
-    @SuppressWarnings("unused")
-    public void leaveChannel(String channel) {
-        chat.leaveChannel(channel);
-    }
-
     public void sendMessage(String channel, String message) {
         if (!chat.getChannels().contains(channel)) joinChannel(channel);
         if (message.length() > 500) message = message.substring(0, 500);
         if (message.isEmpty()) return;
 
         chat.sendMessage(channel, message);
-        System.out.printf("%s %s <%s> %s: %s%s", logTimestamp(), USER, channel, username, message, BREAK);
-        mySQL.messageSent(channel, username, message);
+        System.out.printf("%s %s <%s> %s: %s%s", logTimestamp(), USER, channel, botName, message, BREAK);
+        mySQL.messageSent(channel, botName, message);
+    }
+
+    // Setter
+    public void joinChannel(String channel) {
+        System.out.printf("%s%s %s Joined Channel: %s%s%s", BOLD, logTimestamp(), SYSTEM, channel, BREAK, UNBOLD);
+        chat.joinChannel(channel);
     }
 }

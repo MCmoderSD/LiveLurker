@@ -21,7 +21,6 @@ public class Join {
 
         // About
         String[] name = {"join"};
-        String description = "Sends the command " + commandHandler.getPrefix() + "join to the chat to join the channel";
 
 
         // Initialize attributes
@@ -29,13 +28,13 @@ public class Join {
         reset();
 
         // Register command
-        commandHandler.registerCommand(new Command(description, name) {
+        commandHandler.registerCommand(new Command(name) {
             @Override
             public void execute(ChannelMessageEvent event, String... args) {
-                if (!firstJoin) {
+                if (!firstJoin && !sentMessage) {
                     firstJoin = true;
                     channel = getChannel(event);
-                    resetTimer(10);
+                    startResetTimer(10);
                     return;
                 }
 
@@ -50,7 +49,7 @@ public class Join {
 
                     // Reset attributes
                     sentMessage = true;
-                    resetTimer(120);
+                    startResetTimer(90);
                 }
             }
         });
@@ -63,7 +62,7 @@ public class Join {
     }
 
     // Timer
-    private void resetTimer(int seconds) {
+    private void startResetTimer(int seconds) {
         new Thread(() -> {
             try {
                 Thread.sleep(seconds * 1000L);

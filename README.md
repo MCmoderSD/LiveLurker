@@ -60,7 +60,29 @@ It should have the following structure: <br>
 You can add as many channels or commands as you want. <br>
 The way for black and whitelist works the same. <br> <br>
 
-### 4. Compile and run the bot
+### 4. Add MySQL database
+
+For logging the messages and events, you need to create a MySQL database. <br>
+To start logging you have to start the bot with the following command: <br>
+```java -jar NAME_OF_THE_JAR_FILE.jar -log``` <br> <br>
+
+To connect the bot to the database you need to create a file called ```database.json``` in the ```/src/main/resources/config/``` folder. <br>
+The file should have the following structure: <br>
+
+```json
+{
+  "host": "HOST",
+  "port": "PORT",
+  "database": "DATABASE_NAME",
+  "username": "USERNAME",
+  "password": "PASSWORD"
+}
+```
+You need such a file to start the bot, otherwise, it will not start. <br>
+You can put any values in the file, to ensure that the bot will start without a NullPointerException. <br> <br>
+
+
+### 5. Compile and run the bot
 
 After you compiled the bot into a .jar file, you can run it using the following command: <br>
 ```java -jar NAME_OF_THE_JAR_FILE.jar``` <br> <br>
@@ -73,7 +95,9 @@ After you compiled the bot into a .jar file, you can run it using the following 
 - [x] !status command to check if the bot is running
 - [x] !play command for Marbles on Stream
 - [x] !join command for joining a raffle
-- [x] Graphical User Interface
+- [x] !ping command to check the bot's latency
+- [x] !say command to send a message to the chat
+- [x] Cheap GUI
 - [x] Add a way to send messages to the chat
 - [x] Add a database to store the messages and events
 - [ ] Add a web interface 
