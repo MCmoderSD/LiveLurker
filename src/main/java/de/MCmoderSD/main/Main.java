@@ -42,7 +42,10 @@ public class Main {
         Reader reader = new Reader();
         ArrayList<String> channels = new ArrayList<>();
         for (String channel : reader.lineRead(CHANNEL_LIST)) if (channel.length() > 3) channels.add(channel.replace("\n", "").replace(" ", ""));
-        if (!args.contains("-dev")) channels.addAll(mySQL.getActiveChannels());
+        if (!args.contains("-dev")) {
+            ArrayList<String> temp = mySQL.getActiveChannels();
+            for (String channel : temp) if (!channels.contains(channel)) channels.add(channel);
+        }
 
         // Init Bot
         botClient = new BotClient(botName, botToken, prefix, channels, mySQL);
